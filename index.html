@@ -4,19 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prueba de Geolocalización</title>
+</head>
+<body>
+    <h1>Prueba de Geolocalización</h1>
+    <p>Este mapa solicitará tu ubicación actual cuando cargues la página.</p>
+    
     <script>
-        // Verifica si la geolocalización está disponible en el navegador
+        // Asegurarse de que el documento esté completamente cargado
         document.addEventListener("DOMContentLoaded", function () {
+            console.log("Página cargada, intentando obtener la ubicación.");
+
+            // Verifica si la geolocalización está soportada
             if ("geolocation" in navigator) {
                 console.log("Geolocalización soportada en este navegador.");
+                
                 // Solicita la ubicación actual del usuario
                 navigator.geolocation.getCurrentPosition(
                     function (position) {
-                        // Si la geolocalización es exitosa, muestra la ubicación
+                        // Si se obtiene la ubicación, muestra la latitud y longitud
+                        console.log("Ubicación obtenida.");
                         alert(`Ubicación obtenida: Latitud ${position.coords.latitude}, Longitud ${position.coords.longitude}`);
                     },
                     function (error) {
-                        // Si ocurre un error, maneja el tipo de error
+                        // Si hay un error, muestra un mensaje específico
                         console.error("Error de geolocalización:", error);
                         switch (error.code) {
                             case error.PERMISSION_DENIED:
@@ -39,9 +49,5 @@
             }
         });
     </script>
-</head>
-<body>
-    <h1>Prueba de Geolocalización</h1>
-    <p>Este mapa solicitará tu ubicación actual cuando cargues la página.</p>
 </body>
 </html>
