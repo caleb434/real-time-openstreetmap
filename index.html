@@ -1,30 +1,61 @@
-<script>
-  // Verifica si el navegador soporta geolocalización
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solicitud de Ubicación</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+    }
+    .container {
+      text-align: center;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenido</h1>
+    <p>Por favor, permite el acceso a tu ubicación para continuar.</p>
+    <button id="share-location">Compartir mi ubicación</button>
+  </div>
 
-        console.log(`Latitud: ${latitude}, Longitud: ${longitude}`);
+  <script>
+    const button = document.getElementById('share-location');
 
-        // Carga el mapa centrado en la ubicación actual
-        const map = L.map('map').setView([latitude, longitude], 13);
-
-        // Agrega el mapa base de OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-        }).addTo(map);
-
-        // Agrega un marcador en la ubicación actual
-        L.marker([latitude, longitude]).addTo(map).bindPopup('Estás aquí').openPopup();
-      },
-      (error) => {
-        console.error("Error obteniendo la ubicación: ", error);
-        alert("No se pudo obtener la ubicación actual.");
+    button.addEventListener('click', () => {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // Si el usuario comparte la ubicación, redirige al mapa
+            window.location.href = "https://tu-repo.github.io/real-time-openstreetmap/";
+          },
+          (error) => {
+            alert("No se puede acceder a tu ubicación. Por favor, habilítala para continuar.");
+          }
+        );
+      } else {
+        alert("La geolocalización no está soportada en tu navegador.");
       }
-    );
-  } else {
-    alert("Geolocalización no es soportada por tu navegador.");
-  }
-</script>
+    });
+  </script>
+</body>
+</html>
