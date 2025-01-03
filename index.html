@@ -1,31 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenStreetMap</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <style>
-        #map { height: 100vh; }
-    </style>
-</head>
-<body>
-    <div id="map"></div>
+<script>
+  // Verifica si el navegador soporta geolocalización
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script>
-        // Crea el mapa
-        var map = L.map('map').setView([51.505, -0.09], 13);  // Ajusta las coordenadas según la ubicación inicial que quieras
+        console.log(`Latitud: ${latitude}, Longitud: ${longitude}`);
 
-        // Añade la capa de OpenStreetMap
+        // Carga el mapa centrado en la ubicación actual
+        const map = L.map('map').setView([latitude, longitude], 13);
+
+        // Agrega el mapa base de OpenStreetMap
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          maxZoom: 19,
         }).addTo(map);
 
-        // Añadir un marcador
-        L.marker([51.505, -0.09]).addTo(map)
-            .bindPopup("<b>Hello world!</b><br />I am a popup.")
-            .openPopup();
-    </script>
-</body>
-</html>
+        // Agrega un marcador en la ubicación actual
+        L.marker([latitude, longitude]).addTo(map).bindPopup('Estás aquí').openPopup();
+      },
+      (error) => {
+        console.error("Error obteniendo la ubicación: ", error);
+        alert("No se pudo obtener la ubicación actual.");
+      }
+    );
+  } else {
+    alert("Geolocalización no es soportada por tu navegador.");
+  }
+</script>
