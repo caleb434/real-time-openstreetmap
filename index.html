@@ -3,77 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba de Geolocalización</title>
+    <title>Solicitar Ubicación</title>
     <style>
-        #map { height: 400px; width: 100%; }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #location-request {
+            position: absolute;
+            background-color: black;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 18px;
+            z-index: 10;
+        }
+
+        #map {
+            display: none; /* Inicialmente ocultamos el mapa */
+            height: 100%;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
-    <h1>Prueba de Geolocalización</h1>
-    <p>Este mapa solicitará tu ubicación actual cuando cargues la página.</p>
 
+    <!-- Cuadro negro de solicitud de ubicación -->
+    <div id="location-request">
+        <p>Por favor, permite el acceso a tu ubicación.</p>
+        <button onclick="requestLocation()">Acceder a mi ubicación</button>
+    </div>
+
+    <!-- Contenedor para el mapa -->
     <div id="map"></div>
 
     <script>
-        // Asegurarse de que el documento esté completamente cargado
-        document.addEventListener("DOMContentLoaded", function () {
-            // Verifica si la geolocalización está soportada
+        // Función para solicitar la ubicación
+        function requestLocation() {
+            // Verifica si la geolocalización está soportada en el navegador
             if ("geolocation" in navigator) {
-                console.log("Geolocalización soportada en este navegador.");
-
-                // Solicita la ubicación actual del usuario
                 navigator.geolocation.getCurrentPosition(
-                    function (position) {
-                        // Si se obtiene la ubicación, muestra la latitud y longitud
+                    function(position) {
+                        // Si el usuario permite la ubicación, elimina el cuadro negro y muestra el mapa
+                        document.getElementById('location-request').style.display = 'none';
+                        document.getElementById('map').style.display = 'block';
+                        
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
 
-                        console.log("Ubicación obtenida: Latitud " + lat + ", Longitud " + lon);
-
-                        // Inicializa el mapa con la ubicación obtenida
+                        // Inicializa el mapa con la ubicación del usuario
                         initMap(lat, lon);
                     },
-                    function (error) {
-                        // Si hay un error, muestra un mensaje específico
-                        console.error("Error de geolocalización:", error);
-                        switch (error.code) {
-                            case error.PERMISSION_DENIED:
-                                alert("Has denegado el acceso a tu ubicación.");
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                alert("La información de ubicación no está disponible.");
-                                break;
-                            case error.TIMEOUT:
-                                alert("La solicitud de ubicación ha tardado demasiado.");
-                                break;
-                            default:
-                                alert("Ocurrió un error desconocido.");
-                        }
+                    function(error) {
+                        alert("No se pudo obtener tu ubicación. " + error.message);
                     }
                 );
             } else {
-                console.log("La geolocalización no está soportada en este navegador.");
-                alert("La geolocalización no está soportada en tu navegador.");
+                alert("La geolocalización no es soportada por tu navegador.");
             }
-        });
+        }
 
+        // Función para inicializar el mapa con la ubicación del usuario
         function initMap(lat, lon) {
-            // Cargar el mapa en el div #map con la ubicación obtenida
+            // Inicializa el mapa en la ubicación del usuario
             const map = L.map('map').setView([lat, lon], 13);
 
-            // Cargar el mapa de OpenStreetMap usando el proveedor de mapas
+            // Carga el mapa de OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            // Agregar un marcador en la ubicación obtenida
+            // Agrega un marcador en la ubicación
             L.marker([lat, lon]).addTo(map)
-                .bindPopup('Estás aquí')
+                .bindPopup('Tu ubicación')
                 .openPopup();
         }
     </script>
 
-    <!-- Agregar Leaflet.js para el mapa -->
+    <!-- Agrega la librería Leaflet para el mapa -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
 </body>
 </html>
