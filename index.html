@@ -3,21 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitar Ubicación</title>
+    <title>Ubicación en Mapa</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             height: 100vh;
-            background-color: white;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            background-color: #f0f0f0;
         }
 
         #map {
-            display: none; /* Inicialmente ocultamos el mapa */
             height: 100%;
             width: 100%;
         }
@@ -25,52 +23,54 @@
 </head>
 <body>
 
-    <!-- Contenedor para el mapa -->
     <div id="map"></div>
 
     <script>
-        // Función para solicitar la ubicación
-        function requestLocation() {
+        // Función para inicializar el mapa
+        function initMap(lat, lon) {
+            const map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: lat, lng: lon },
+                zoom: 15,
+            });
+
+            // Agregar un marcador en la ubicación
+            new google.maps.Marker({
+                position: { lat: lat, lng: lon },
+                map: map,
+                title: "Tu ubicación",
+            });
+        }
+
+        // Función para obtener la ubicación del usuario
+        function getLocation() {
             if ("geolocation" in navigator) {
-                // Solicita la ubicación del usuario
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-
-                        // Inicializa el mapa con la ubicación del usuario
-                        initMap(lat, lon);
+                        initMap(lat, lon);  // Llama a la función para mostrar el mapa
                     },
                     function(error) {
-                        alert("No se pudo obtener tu ubicación. " + error.message);
+                        alert("No se pudo obtener tu ubicación. Error: " + error.message);
                     }
                 );
             } else {
-                alert("La geolocalización no es soportada por tu navegador.");
+                alert("La geolocalización no está soportada en tu navegador.");
             }
         }
 
-        // Función para inicializar el mapa con la ubicación del usuario
-        function initMap(lat, lon) {
-            // Inicializa el mapa en la ubicación del usuario
-            const map = L.map('map').setView([lat, lon], 13);
-
-            // Carga el mapa de OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-
-            // Agrega un marcador en la ubicación
-            L.marker([lat, lon]).addTo(map)
-                .bindPopup('Tu ubicación')
-                .openPopup();
+        // Esperar a que el contenido se cargue y luego solicitar la ubicación
+        window.onload = function() {
+            getLocation();
         }
-
-        // Ejecutamos la solicitud de ubicación tan pronto como la página cargue
-        window.onload = requestLocation;
     </script>
 
-    <!-- Agrega la librería Leaflet para el mapa -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+    <!-- Cargar el API de Google Maps -->
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap"
+        async
+        defer>
+    </script>
+
 </body>
 </html>
