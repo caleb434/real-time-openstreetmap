@@ -4,26 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prueba de Geolocalización</title>
+    <style>
+        #map { height: 400px; width: 100%; }
+    </style>
 </head>
 <body>
     <h1>Prueba de Geolocalización</h1>
     <p>Este mapa solicitará tu ubicación actual cuando cargues la página.</p>
-    
+
+    <div id="map"></div>
+
     <script>
         // Asegurarse de que el documento esté completamente cargado
         document.addEventListener("DOMContentLoaded", function () {
-            console.log("Página cargada, intentando obtener la ubicación.");
-
             // Verifica si la geolocalización está soportada
             if ("geolocation" in navigator) {
                 console.log("Geolocalización soportada en este navegador.");
-                
+
                 // Solicita la ubicación actual del usuario
                 navigator.geolocation.getCurrentPosition(
                     function (position) {
                         // Si se obtiene la ubicación, muestra la latitud y longitud
-                        console.log("Ubicación obtenida.");
-                        alert(`Ubicación obtenida: Latitud ${position.coords.latitude}, Longitud ${position.coords.longitude}`);
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+
+                        console.log("Ubicación obtenida: Latitud " + lat + ", Longitud " + lon);
+
+                        // Inicializa el mapa con la ubicación obtenida
+                        initMap(lat, lon);
                     },
                     function (error) {
                         // Si hay un error, muestra un mensaje específico
@@ -48,6 +56,24 @@
                 alert("La geolocalización no está soportada en tu navegador.");
             }
         });
+
+        function initMap(lat, lon) {
+            // Cargar el mapa en el div #map con la ubicación obtenida
+            const map = L.map('map').setView([lat, lon], 13);
+
+            // Cargar el mapa de OpenStreetMap usando el proveedor de mapas
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Agregar un marcador en la ubicación obtenida
+            L.marker([lat, lon]).addTo(map)
+                .bindPopup('Estás aquí')
+                .openPopup();
+        }
     </script>
+
+    <!-- Agregar Leaflet.js para el mapa -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
 </body>
 </html>
