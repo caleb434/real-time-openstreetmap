@@ -16,17 +16,6 @@
             overflow: hidden;
         }
 
-        #location-request {
-            position: absolute;
-            background-color: black;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 18px;
-            z-index: 10;
-        }
-
         #map {
             display: none; /* Inicialmente ocultamos el mapa */
             height: 100%;
@@ -36,26 +25,16 @@
 </head>
 <body>
 
-    <!-- Cuadro negro de solicitud de ubicación -->
-    <div id="location-request">
-        <p>Por favor, permite el acceso a tu ubicación.</p>
-        <button onclick="requestLocation()">Acceder a mi ubicación</button>
-    </div>
-
     <!-- Contenedor para el mapa -->
     <div id="map"></div>
 
     <script>
         // Función para solicitar la ubicación
         function requestLocation() {
-            // Verifica si la geolocalización está soportada en el navegador
             if ("geolocation" in navigator) {
+                // Solicita la ubicación del usuario
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        // Si el usuario permite la ubicación, elimina el cuadro negro y muestra el mapa
-                        document.getElementById('location-request').style.display = 'none';
-                        document.getElementById('map').style.display = 'block';
-                        
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
 
@@ -86,6 +65,9 @@
                 .bindPopup('Tu ubicación')
                 .openPopup();
         }
+
+        // Ejecutamos la solicitud de ubicación tan pronto como la página cargue
+        window.onload = requestLocation;
     </script>
 
     <!-- Agrega la librería Leaflet para el mapa -->
